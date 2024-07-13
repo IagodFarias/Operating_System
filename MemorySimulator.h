@@ -10,6 +10,7 @@ class MemoryPage {
 public:
     int pageId;
     int frameId;
+    MemoryPage() : pageId(-1), frameId(-1) {} // Construtor padrão
     MemoryPage(int pid, int fid) : pageId(pid), frameId(fid) {}
 };
 
