@@ -5,8 +5,8 @@
 
 int main() {
     int memory_size = 3;  // Defina o tamanho da memória
-    std::vector<int> pagesToAccess = {1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5};  // Páginas predefinidas
-    std::vector<int> future_references = {1, 2, 3, 4, 5};  // Referências futuras para OPT
+    std::vector<int> pagesToAccess = {1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3,1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2 ,3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2,  3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2};  // Páginas predefinidas
+    std::vector<int> future_references = {5,4 ,3 ,2 ,1};  // Referências futuras para OPT
 
     while (true) {
         MemorySimulator simulator(memory_size);  // Reinicializa o simulador a cada iteração
@@ -38,7 +38,7 @@ int main() {
 
         simulator.print_statistics();
         
-        // Pausa o sistema (apenas para Windows, com "system(pause)")
+       
         system("pause");
     }
 
