@@ -38,7 +38,7 @@ int main() {
 
         simulator.print_statistics();
         
-        // Pausa o sistema (apenas para Windows, com "system(pause)")
+        // Pausa o sistema
         system("pause");
     }
 
