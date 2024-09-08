@@ -1,33 +1,36 @@
 #ifndef MEMORY_SIMULATOR_H
 #define MEMORY_SIMULATOR_H
 
-#include <vector>
-#include <queue>
-#include <unordered_map>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 class MemoryPage {
 public:
-    int pageId;
-    int frameId;
-    MemoryPage() : pageId(-1), frameId(-1) {} // Construtor padrão
-    MemoryPage(int pid, int fid) : pageId(pid), frameId(fid) {}
+    int page_number;
+    int frequency;
+    int last_access;
+
+    MemoryPage(int page_number, int last_access);
 };
 
 class MemorySimulator {
 private:
-    int numFrames;
-    std::vector<int> frames;
-    std::queue<int> pageQueue;
-    std::unordered_map<int, MemoryPage> pageTable;
+    int memory_size;
+    std::vector<MemoryPage> memory;
+    int total_requests;
+    int total_page_faults;
 
-    void removeOldestPage();
-    void addNewPage(int pageId);
+    void fifo_policy(int page_number, int current_time);
+    void lfu_policy(int page_number, int current_time);
+    void opt_policy(int page_number, int current_time, const std::vector<int>& future_references);
 
 public:
-    MemorySimulator(int numFrames);
-    void accessPage(int pageId);
-    void displayFrames();
+    MemorySimulator(int memory_size);
+
+    void access_page(int page_number, int current_time, const std::string& policy, const std::vector<int>& future_references = {});
+    void print_statistics() const;
+    void display_frames() const;
 };
 
 #endif // MEMORY_SIMULATOR_H
