@@ -37,8 +37,7 @@ int main() {
         }
 
         simulator.print_statistics();
-        
-       
+        // Pausa o sistema
         system("pause");
     }
 
