@@ -2,11 +2,31 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <random>  // Para std::default_random_engine e std::normal_distribution
+#include <ctime>   // Para std::time
+
+void generateRadomVector(std::vector<int>& vector){
+    int mean = 10 , stddev = 2;  // Média e desvio padrão
+
+    std::default_random_engine generator(static_cast<unsigned>(std::time(0)));
+
+    std::normal_distribution<double> distribution(mean, stddev);
+
+    for (auto& num: vector) {
+        num = distribution(generator);  // Gera um número de acordo com a distribuição normal
+    }
+ }
 
 int main() {
+    int pagesNumber= 100;
     int memory_size = 3;  // Defina o tamanho da memória
-    std::vector<int> pagesToAccess = {1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3,1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2 ,3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2,  3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2};  // Páginas predefinidas
-    std::vector<int> future_references = {5,4 ,3 ,2 ,1};  // Referências futuras para OPT
+    std::vector<int> pagesToAccess(pagesNumber); //= {1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3,1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2 ,3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2,  3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2};  // Páginas predefinidas
+    std::vector<int> future_references = {5, 4 ,3 ,2 ,1};  // Referências futuras para OPT
+    generateRadomVector(pagesToAccess);
+
+    for (auto& num: pagesToAccess) {
+        std::cout << num << std::endl;
+    }
 
     while (true) {
         MemorySimulator simulator(memory_size);  // Reinicializa o simulador a cada iteração
