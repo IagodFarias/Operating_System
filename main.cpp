@@ -13,14 +13,15 @@ void generateRandomPages(std::vector<int>& pages, int mean = 10, int stddev = 2)
     std::normal_distribution<double> distribution(mean, stddev);
 
     for (auto& page : pages) {
-        page = distribution(generator);  // Gera um número de acordo com a distribuição normal
+        page = static_cast<int>(distribution(generator));  // Gera um número de acordo com a distribuição normal
+        if (page < 0) page = 0; // Garantir que não haja números negativos
     }
 }
 
 int main() {
     int memory_size = 10;  // Defina o tamanho da memória
     int time_quantum = 5;
-    int pagesNumber = 100;
+    int pagesNumber = 20;  // Reduzi o número de páginas para facilitar o teste
     Scheduler scheduler(time_quantum);  // Escalona a partir do time_quantum
 
     // Geração de processos e suas páginas de forma aleatória
@@ -34,22 +35,20 @@ int main() {
     Process process2(2, pages2);
     Process process3(3, pages3);
     Process process4(4, pages4);
-   
-    
 
     scheduler.add_process(&process1);  // Adiciona o processo ao escalonador.
     scheduler.add_process(&process2);
     scheduler.add_process(&process3);
     scheduler.add_process(&process4);
 
-    std::vector<int> future_references = {5, 4, 3, 2, 1};  // Referências futuras para OPT
+    std::vector<int> future_references = {};  // Referências futuras para OPT (pode ser preenchido conforme necessário)
 
     while (true) {
         MemorySimulator simulator(memory_size);  // Reinicializa o simulador a cada iteração
 
         // Solicita ao usuário que escolha a política de substituição
         std::string policy;
-        std::cout << "Choose a replacement policy (FIFO, LFU, OPT) or type 'exit' to quit: ";
+        std::cout << "Escolha uma política de substituição (FIFO, LFU, OPT) ou digite 'exit' para sair: ";
         std::cin >> policy;
 
         // Permite ao usuário sair do loop digitando "exit"
@@ -59,27 +58,19 @@ int main() {
 
         // Verifica se a política escolhida é válida
         if (policy != "FIFO" && policy != "LFU" && policy != "OPT") {
-            std::cout << "Invalid policy. Please choose between FIFO, LFU, or OPT." << std::endl;
+            std::cout << "Política inválida. Por favor, escolha entre FIFO, LFU ou OPT." << std::endl;
             continue;  // Volta para o início do loop
         }
-
-        // Salva o contexto de cada processo antes de iniciar a simulação
-        process1.save_context();
-        process2.save_context();
-
-        // Carrega o contexto de cada processo antes de simular
-        process1.load_context();
-        process2.load_context();
 
         // Executa o escalonador com a política escolhida, passando o simulador para exibir o estado da memória
         scheduler.run(policy, future_references, simulator);
 
         // Pausa o sistema para a próxima execução
-        std::cout << "Press any key to continue..." << std::endl;
+        std::cout << "Pressione Enter para continuar..." << std::endl;
         std::cin.ignore();
         std::cin.get();
     }
 
-    std::cout << "Program terminated." << std::endl;
+    std::cout << "Programa encerrado." << std::endl;
     return 0;
 }

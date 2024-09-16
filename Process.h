@@ -2,7 +2,6 @@
 #define PROCESS_H
 
 #include <vector>
-#include <string>
 
 class Process {
 private:
@@ -10,20 +9,12 @@ private:
     std::vector<int> pages_to_access;
 
 public:
-    // Construtor que recebe o ID do processo e as páginas que ele acessará
     Process(int id, const std::vector<int>& pages);
-    
-    // Métodos para salvar e carregar o contexto do processo
-    void save_context() const;
-    void load_context();
 
-    // Retorna o ID do processo
     int get_id() const { return process_id; }
+    std::vector<int>& get_pages() { return pages_to_access; }
 
-    // Retorna as páginas que o processo precisa acessar
-    // Adicionar uma versão não constante de get_pages()
-std::vector<int>& get_pages() { return pages_to_access; }
-
+    // Removemos as funções de salvar e carregar contexto, pois não são mais necessárias
 };
 
 #endif // PROCESS_H
