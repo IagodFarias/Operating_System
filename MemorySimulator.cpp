@@ -1,32 +1,37 @@
 #include "MemorySimulator.h"
 
-// Construtor de MemoryPage
-MemoryPage::MemoryPage(int page_number, int last_access)
-    : page_number(page_number), frequency(1), last_access(last_access) {}
+// Construtor de MemoryPage com process_id
+MemoryPage::MemoryPage(int page_number, int last_access, int process_id)
+    : page_number(page_number), frequency(1), last_access(last_access), process_id(process_id) {}
 
 // Construtor de MemorySimulator
 MemorySimulator::MemorySimulator(int memory_size)
     : memory_size(memory_size), total_requests(0), total_page_faults(0) {}
 
-// Política FIFO
-void MemorySimulator::fifo_policy(int page_number, int current_time) {
+// Adiciona um processo ao simulador
+void MemorySimulator::add_process(const Process& process) {
+    // Função vazia por enquanto, pode ser utilizada para inicializar processos
+}
+
+// Política FIFO com process_id
+void MemorySimulator::fifo_policy(int process_id, int page_number, int current_time) {
     auto it = std::find_if(memory.begin(), memory.end(), [&](const MemoryPage &p) {
-        return p.page_number == page_number;
+        return p.page_number == page_number && p.process_id == process_id;
     });
 
     if (it == memory.end()) {
         if (memory.size() >= memory_size) {
             memory.erase(memory.begin()); // Remove a primeira página (FIFO)
         }
-        memory.emplace_back(page_number, current_time);
+        memory.emplace_back(page_number, current_time, process_id);  // Adiciona process_id
         total_page_faults++;
     }
 }
 
-// Política LFU
-void MemorySimulator::lfu_policy(int page_number, int current_time) {
+// Política LFU com process_id
+void MemorySimulator::lfu_policy(int process_id, int page_number, int current_time) {
     auto it = std::find_if(memory.begin(), memory.end(), [&](const MemoryPage &p) {
-        return p.page_number == page_number;
+        return p.page_number == page_number && p.process_id == process_id;
     });
 
     if (it != memory.end()) {
@@ -39,15 +44,15 @@ void MemorySimulator::lfu_policy(int page_number, int current_time) {
             });
             memory.erase(lfu_it); // Remove a página menos frequentemente usada
         }
-        memory.emplace_back(page_number, current_time);
+        memory.emplace_back(page_number, current_time, process_id);  // Adiciona process_id
         total_page_faults++;
     }
 }
 
-// Política OPT
-void MemorySimulator::opt_policy(int page_number, int current_time, const std::vector<int>& future_references) {
+// Política OPT com process_id
+void MemorySimulator::opt_policy(int process_id, int page_number, int current_time, const std::vector<int>& future_references) {
     auto it = std::find_if(memory.begin(), memory.end(), [&](const MemoryPage &p) {
-        return p.page_number == page_number;
+        return p.page_number == page_number && p.process_id == process_id;
     });
 
     if (it != memory.end()) {
@@ -72,39 +77,57 @@ void MemorySimulator::opt_policy(int page_number, int current_time, const std::v
             }
             memory.erase(memory.begin() + page_to_remove);
         }
-        memory.emplace_back(page_number, current_time);
+        memory.emplace_back(page_number, current_time, process_id);  // Adiciona process_id
         total_page_faults++;
     }
 }
 
-// Método que simula o acesso de uma página com a política escolhida
-void MemorySimulator::access_page(int page_number, int current_time, const std::string& policy, const std::vector<int>& future_references) {
+// Simula o acesso a uma página
+void MemorySimulator::access_page(int process_id, int page_number, int current_time, const std::string& policy, const std::vector<int>& future_references) {
     total_requests++;
 
     if (policy == "FIFO") {
-        fifo_policy(page_number, current_time);
+        fifo_policy(process_id, page_number, current_time);
     } else if (policy == "LFU") {
-        lfu_policy(page_number, current_time);
+        lfu_policy(process_id, page_number, current_time);
     } else if (policy == "OPT") {
-        opt_policy(page_number, current_time, future_references);
+        opt_policy(process_id, page_number, current_time, future_references);
     } else {
         std::cerr << "Unknown policy: " << policy << std::endl;
         return;
     }
 }
 
-// Método para exibir estatísticas
+// Exibe estatísticas
 void MemorySimulator::print_statistics() const {
     std::cout << "Total requests: " << total_requests << std::endl;
     std::cout << "Total page faults: " << total_page_faults << std::endl;
     std::cout << "Page fault rate: " << (double)total_page_faults / total_requests * 100 << "%" << std::endl;
 }
 
-// Método para exibir os frames atuais da memória
-void MemorySimulator::display_frames() const {
+// Exibe os frames atuais
+/*void MemorySimulator::display_frames() const {
     std::cout << "Current Frames: ";
     for (const auto& page : memory) {
-        std::cout << page.page_number << " ";
+        std::cout << "P" << page.process_id << ": " << page.page_number << " ";  // Exibe process_id e page_number
     }
     std::cout << std::endl;
+}*/
+
+void MemorySimulator::display_frames() const {
+    std::cout << "===== Current Physical Memory State =====" << std::endl;
+    std::cout << " Frame | Process ID | Page Number " << std::endl;
+    std::cout << "-----------------------------------------" << std::endl;
+    
+    for (int i = 0; i < memory_size; ++i) {
+        if (i < memory.size()) {
+            const auto& page = memory[i];
+            std::cout << "   " << i << "   |     P" << page.process_id << "     |     " << page.page_number << std::endl;
+        } else {
+            std::cout << "   " << i << "   |     -     |     -" << std::endl;  // Indica frames vazios
+        }
+    }
+    
+    std::cout << "=========================================" << std::endl;
 }
+

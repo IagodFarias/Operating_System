@@ -1,12 +1,40 @@
-#include "MemorySimulator.h"
 #include <iostream>
 #include <vector>
 #include <string>
+#include <random>
+#include <ctime>
+#include "MemorySimulator.h"
+#include "Scheduler.h"
+#include "Process.h"
+
+// Função que gera um vetor aleatório de páginas para acessar
+void generateRandomPages(std::vector<int>& pages, int mean = 10, int stddev = 2) {
+    std::default_random_engine generator(static_cast<unsigned>(std::time(0)));
+    std::normal_distribution<double> distribution(mean, stddev);
+
+    for (auto& page : pages) {
+        page = distribution(generator);  // Gera um número de acordo com a distribuição normal
+    }
+}
 
 int main() {
     int memory_size = 3;  // Defina o tamanho da memória
-    std::vector<int> pagesToAccess = {1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3,1, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2 ,3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2,  3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 21, 2, 3, 3, 1, 4, 5, 1, 2, 5, 4, 5, 3, 1, 2, 4, 5, 1, 3, 4, 2, 5, 1, 3, 2};  // Páginas predefinidas
-    std::vector<int> future_references = {5,4 ,3 ,2 ,1};  // Referências futuras para OPT
+    int time_quantum = 5;
+    int pagesNumber = 100;
+    Scheduler scheduler(time_quantum);  // Escalona a partir do time_quantum
+
+    // Geração de processos e suas páginas de forma aleatória
+    std::vector<int> pages1(pagesNumber), pages2(pagesNumber);
+    generateRandomPages(pages1, 12, 3);
+    generateRandomPages(pages2);
+
+    Process process1(1, pages1);  // Cria os processos, com seu ID, e páginas.
+    Process process2(2, pages2);
+
+    scheduler.add_process(&process1);  // Adiciona o processo ao escalonador.
+    scheduler.add_process(&process2);
+
+    std::vector<int> future_references = {5, 4, 3, 2, 1};  // Referências futuras para OPT
 
     while (true) {
         MemorySimulator simulator(memory_size);  // Reinicializa o simulador a cada iteração
@@ -27,18 +55,25 @@ int main() {
             continue;  // Volta para o início do loop
         }
 
-        // Simulação do acesso a páginas
-        int current_time = 0;
-        for (int page : pagesToAccess) {
-            std::cout << "Time " << current_time << ": Accessing page " << page << std::endl;
-            simulator.access_page(page, current_time, policy, future_references);
-            simulator.display_frames();
-            current_time++;
-        }
+        // Salva o contexto de cada processo antes de iniciar a simulação
+        process1.save_context();
+        process2.save_context();
 
-        simulator.print_statistics();
-        // Pausa o sistema
-        system("pause");
+        // Carrega o contexto de cada processo antes de simular
+        process1.load_context();
+        process2.load_context();
+
+        // Executa o escalonador com a política escolhida
+        scheduler.run(policy, future_references);
+
+        // Mostra o estado atual da memória física após a execução do escalonador
+        std::cout << "Memory state after scheduling:" << std::endl;
+        simulator.display_frames();  // Chama a função para exibir a memória
+
+        // Pausa o sistema para a próxima execução
+        std::cout << "Press any key to continue..." << std::endl;
+        std::cin.ignore();
+        std::cin.get();
     }
 
     std::cout << "Program terminated." << std::endl;
