@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Process.h"
+#include "MemorySimulator.h"  // Incluímos o cabeçalho do MemorySimulator
 
 class Scheduler {
 private:
@@ -14,7 +15,8 @@ private:
 public:
     Scheduler(int time_quantum);              // Construtor que inicializa o quantum
     void add_process(Process* process);       // Adiciona um processo à lista
-    void run(const std::string& scheduling_policy, const std::vector<int>& future_references); // Executa os processos com base na política
+    // A função run agora aceita um MemorySimulator como terceiro parâmetro
+    void run(const std::string& scheduling_policy, const std::vector<int>& future_references, MemorySimulator& simulator);
 };
 
 #endif // SCHEDULER_H

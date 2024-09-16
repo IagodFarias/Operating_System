@@ -1,24 +1,21 @@
 #include "Scheduler.h"
-//#include "MemorySimulator.h"
 #include "MemorySimulator.h"
-
 #include <iostream>
 
 // Construtor que inicializa o quantum e o índice do processo atual
 Scheduler::Scheduler(int time_quantum)
     : time_quantum(time_quantum), current_process_index(0) {}
 
-void Scheduler::run(const std::string& policy, const std::vector<int>& future_references) {
+// Agora a função run aceita o simulador de memória como argumento
+void Scheduler::run(const std::string& policy, const std::vector<int>& future_references, MemorySimulator& simulator) {
     if (processes.empty()) {
         std::cout << "No processes to schedule." << std::endl;
         return;
     }
 
-    MemorySimulator simulator(3); // Definimos um simulador com tamanho de memória
-
     std::cout << "Running processes with " << policy << " replacement policy." << std::endl;
 
-    // Agora, em vez de verificar por políticas de escalonamento, chamaremos o simulador
+    // Agora, em vez de criar um novo simulador, utilizamos o simulador passado por referência
     while (true) {
         bool all_done = true; // Verifica se todos os processos terminaram
 

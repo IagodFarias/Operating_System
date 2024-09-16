@@ -96,6 +96,7 @@ void MemorySimulator::access_page(int process_id, int page_number, int current_t
         std::cerr << "Unknown policy: " << policy << std::endl;
         return;
     }
+    display_frames();
 }
 
 // Exibe estatísticas
@@ -114,7 +115,7 @@ void MemorySimulator::print_statistics() const {
     std::cout << std::endl;
 }*/
 
-void MemorySimulator::display_frames() const {
+/*void MemorySimulator::display_frames() const {
     std::cout << "===== Current Physical Memory State =====" << std::endl;
     std::cout << " Frame | Process ID | Page Number " << std::endl;
     std::cout << "-----------------------------------------" << std::endl;
@@ -129,5 +130,21 @@ void MemorySimulator::display_frames() const {
     }
     
     std::cout << "=========================================" << std::endl;
-}
+}*/
 
+void MemorySimulator::display_frames() const {
+    std::cout << "===== Current Physical Memory State =====" << std::endl;
+    std::cout << " Frame | Process ID | Page Number " << std::endl;
+    std::cout << "-----------------------------------------" << std::endl;
+
+    for (int i = 0; i < memory_size; ++i) {
+        if (i < memory.size()) {
+            const auto& page = memory[i];
+            std::cout << "   " << i << "   |     P" << page.process_id << "     |     " << page.page_number << std::endl;
+        } else {
+            std::cout << "   " << i << "   |     -     |     -" << std::endl;  // Indica frames vazios
+        }
+    }
+
+    std::cout << "=========================================" << std::endl;
+}

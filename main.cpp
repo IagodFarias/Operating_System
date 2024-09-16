@@ -18,21 +18,29 @@ void generateRandomPages(std::vector<int>& pages, int mean = 10, int stddev = 2)
 }
 
 int main() {
-    int memory_size = 3;  // Defina o tamanho da memória
+    int memory_size = 10;  // Defina o tamanho da memória
     int time_quantum = 5;
     int pagesNumber = 100;
     Scheduler scheduler(time_quantum);  // Escalona a partir do time_quantum
 
     // Geração de processos e suas páginas de forma aleatória
-    std::vector<int> pages1(pagesNumber), pages2(pagesNumber);
+    std::vector<int> pages1(pagesNumber), pages2(pagesNumber), pages3(pagesNumber), pages4(pagesNumber);
     generateRandomPages(pages1, 12, 3);
     generateRandomPages(pages2);
+    generateRandomPages(pages3);
+    generateRandomPages(pages4);
 
     Process process1(1, pages1);  // Cria os processos, com seu ID, e páginas.
     Process process2(2, pages2);
+    Process process3(3, pages3);
+    Process process4(4, pages4);
+   
+    
 
     scheduler.add_process(&process1);  // Adiciona o processo ao escalonador.
     scheduler.add_process(&process2);
+    scheduler.add_process(&process3);
+    scheduler.add_process(&process4);
 
     std::vector<int> future_references = {5, 4, 3, 2, 1};  // Referências futuras para OPT
 
@@ -63,12 +71,8 @@ int main() {
         process1.load_context();
         process2.load_context();
 
-        // Executa o escalonador com a política escolhida
-        scheduler.run(policy, future_references);
-
-        // Mostra o estado atual da memória física após a execução do escalonador
-        std::cout << "Memory state after scheduling:" << std::endl;
-        simulator.display_frames();  // Chama a função para exibir a memória
+        // Executa o escalonador com a política escolhida, passando o simulador para exibir o estado da memória
+        scheduler.run(policy, future_references, simulator);
 
         // Pausa o sistema para a próxima execução
         std::cout << "Press any key to continue..." << std::endl;
@@ -77,5 +81,5 @@ int main() {
     }
 
     std::cout << "Program terminated." << std::endl;
-    return 0;// testando o git 
+    return 0;
 }
