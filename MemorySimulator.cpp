@@ -106,31 +106,6 @@ void MemorySimulator::print_statistics() const {
     std::cout << "Page fault rate: " << (double)total_page_faults / total_requests * 100 << "%" << std::endl;
 }
 
-// Exibe os frames atuais
-/*void MemorySimulator::display_frames() const {
-    std::cout << "Current Frames: ";
-    for (const auto& page : memory) {
-        std::cout << "P" << page.process_id << ": " << page.page_number << " ";  // Exibe process_id e page_number
-    }
-    std::cout << std::endl;
-}*/
-
-/*void MemorySimulator::display_frames() const {
-    std::cout << "===== Current Physical Memory State =====" << std::endl;
-    std::cout << " Frame | Process ID | Page Number " << std::endl;
-    std::cout << "-----------------------------------------" << std::endl;
-    
-    for (int i = 0; i < memory_size; ++i) {
-        if (i < memory.size()) {
-            const auto& page = memory[i];
-            std::cout << "   " << i << "   |     P" << page.process_id << "     |     " << page.page_number << std::endl;
-        } else {
-            std::cout << "   " << i << "   |     -     |     -" << std::endl;  // Indica frames vazios
-        }
-    }
-    
-    std::cout << "=========================================" << std::endl;
-}*/
 
 void MemorySimulator::display_frames() const {
     std::cout << "===== Current Physical Memory State =====" << std::endl;
