@@ -148,3 +148,11 @@ void MemorySimulator::display_frames() const {
 
     std::cout << "=========================================" << std::endl;
 }
+int_fast32_t IOsimulator(){
+
+
+
+
+
+    return 0; 
+}
